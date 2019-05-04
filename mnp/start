@@ -1,0 +1,27 @@
+#!/bin/bash
+
+python3 -m venv virtenv
+source virtenv/bin/activate
+pip3 install flask
+
+mkdir -p app
+cd app
+touch __init__.py
+
+cat <<EOF > __init__.py
+from flask import Flask
+
+app = Flask(__name__)
+
+from app import routes
+EOF
+
+cd ..
+touch mnp.py
+
+cat <<EOF > mnp.py
+from app import app
+EOF
+export FLASK_APP=mnp.py
+export FLASK_DEBUG=1
+flask run --host=0.0.0.0
