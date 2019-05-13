@@ -7,6 +7,7 @@ import random
 onfield = [0]
 double = [0]
 move_fwd = 0
+dice_result = [0]
 
 def throw_dice():
     '''Throw two dice, add result and return'''
@@ -22,10 +23,10 @@ def throw_dice():
     return result_of_dices
 
 def move_forward():
-    dice_result = throw_dice()
-    move_fwd = ((onfield[0] + dice_result))
+    dice_result[0] = throw_dice()
+    move_fwd = ((onfield[0] + dice_result[0]))
     if move_fwd > 12:
-        move_fwd = ((onfield[0] + dice_result - 12))
+        move_fwd = ((onfield[0] + dice_result[0] - 12))
         onfield[0] = move_fwd
         return move_fwd
     else:

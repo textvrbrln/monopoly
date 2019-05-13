@@ -6,33 +6,64 @@ import streets
 import player
 
 '''Start event loop'''
-
 def get_player_ready():    
         playerlist_length = len(player.playerlist)
-        element = 0
-        #for elements in list(range(1,playerlist_length)):
-        while element <= playerlist_length:
-            playername = player.playerlist[element]
-            play(playername)
-            decision = input("Nächster Spieler?[Y/N]")
-            if decision == "Y":
-                element += 1
-                print(element)
-                print(playerlist_length)
-                if element >= playerlist_length:
-                    get_player_ready()
-            elif decision == "N":
-                exit
+        print("Anzahl der Spieler: ", playerlist_length)
+        press = input("Los gehts mit [Enter]...")
+        if press == "":
+            start_game(playerlist_length)
+        else:
+            quit()
+
+def start_game(playerlist_length):
+        for element in range(0, playerlist_length):
+            print("Spieler "+player.playerlist[element]+" würfelt!")
+            play(player.playerlist[element])
+            decision = input("Nächster Spieler? (y/n)")
+            if decision == "y" and (int(playerlist_length)-int(element) == 1):
+                #print("Element: "+str(element)+" / Player: "+str(playerlist_length))
+                start_game(playerlist_length)
+            elif decision == "y" and element < playerlist_length:
+                #print("Element: "+str(element)+" / Player: "+str(playerlist_length))
+                continue
+            else:
+                main()
 
 def play(playername):
-    # 
-    print("Dice")
-    print(playername)
-
+    spieler = player.Playerclass(playername, 10000)
+    print(spieler.name)
+    wurf = spieler.throw_dice()
+    print(wurf)
     # throw_dice and move to field number X
-    go_to_field = dice.move_forward()
+    # Klasse player
+        # playername
+            # playerid (einmalig)
+        # kontostand
+            # zahlen
+            # kassieren
+        # aktuelles feld
+            # würfeln
+            # feld wechseln
+        # kartenbesitz
+            # karte ziehen
+            # karte anwenden
+            # karte behalten
+        # Straßenbesitz
+            # mit drei Straßen
+            # mit einem Haus
+            # ...
+            # mit Hypothek
+        # Werkbesitz
+            # mit einem Werk
+        # Bahnhofsbesitz
+            # mit einem Bahnhof
+            # ...
+
+    # add player profile
     
-    # check for double
+    go_to_field = spieler.move_forward()
+    print(str(playername)+" würfelt eine "+str(wurf))
+    print(str(playername)+" landet auf Feld "+str(go_to_field))
     doublecheck = dice.double[0]
     if doublecheck == 1:
         print("Pasch!")
@@ -40,33 +71,30 @@ def play(playername):
         # b) User goes to Jail
     else:
         pass
-    
-    # go_to_field = 0
-    #print("Feld", go_to_field)
-    
+
     # If move-to-field is a street...
     if dice.get_field_type(go_to_field) == "street":
         # start an instance of class Street()...
         move_to_street = streets.Street()
         print("Straßenname: ", move_to_street.allstreets[go_to_field])
         print("Basismiete:", move_to_street.allbaserents[go_to_field])
-        print("Miete mit allen Straßen: ", move_to_street.allbaserents_with_all_streets[go_to_field])
-        print("Miete mit einem Haus:", move_to_street.allbaserent_with_one_house[go_to_field])
-        print("Miete mit zwei Häusern: ", move_to_street.allbaserent_with_two_houses[go_to_field])
-        print("Miete mit drei Häusern:", move_to_street.allbaserent_with_three_houses[go_to_field])
-        print("Miete mit vier Häusern: ", move_to_street.allbaserent_with_four_houses[go_to_field])
-        print("Miete mit einem Hotel:", move_to_street.allbaserent_with_one_hotel[go_to_field])
+        #print("Miete mit allen Straßen: ", move_to_street.allbaserents_with_all_streets[go_to_field])
+        #print("Miete mit einem Haus:", move_to_street.allbaserent_with_one_house[go_to_field])
+        #print("Miete mit zwei Häusern: ", move_to_street.allbaserent_with_two_houses[go_to_field])
+        #print("Miete mit drei Häusern:", move_to_street.allbaserent_with_three_houses[go_to_field])
+        #print("Miete mit vier Häusern: ", move_to_street.allbaserent_with_four_houses[go_to_field])
+        #print("Miete mit einem Hotel:", move_to_street.allbaserent_with_one_hotel[go_to_field])
         # ...check, who the street belongs to...
         # ...pay rent, buy houses, hotels, take mortage...
-    
+
     elif dice.get_field_type(go_to_field) == "community":
         #print("Community!")
         pass
-    
+
     elif dice.get_field_type(go_to_field) == "taxes":
         #print("Taxes!")
         pass
-    
+
     elif dice.get_field_type(go_to_field) == "station":
         #print("Station!")
         pass
@@ -85,35 +113,46 @@ def play(playername):
 
     elif dice.get_field_type(go_to_field) == "parking":
         print("Free Parking!")
+    # update player profile
+    # autosave player profile
+    # autosave state
 
-    """ decision = str(input("Nächster Wurf...[Y/n]"))
-    if decision == "Y":
-        if doublecheck == 1:
-            counter == counter
-        elif counter < 3:
-            counter += 1
-        else:
-            counter = 0
-    else:
-        print("Ende")
-        break
-         
-        # write in json file
-        import json
-        file = open('/filesave/playername.json', 'w+')
-        data = { "x": 12153535.232321, "y": 35234531.232322 }
-        json.dump(data, file)
-        # https://stackoverflow.com/questions/4450144/easy-save-load-of-data-in-python#4450248
-        # load from json file
-        import json
-        file = open('/usr/data/application/json-dump.json', 'r')
-        print json.load(file) """
+def main_menu():
+    print("Willkommen bei Monopoly.")
+    print("")
+    print("\t\tNeues Spiel starten [n].")
+    print("\t\tAltes Spiel laden [l].")
+    print("\t\tEinstellungen ändern [e].")
+    print("\t\tSpiel fortsetzen [f].")
+    print("\t\tSpiel beenden [b].")
+    print("")
+    choice = input("Wähle eine Option:")
+    if choice == "n":
+        player.add_number_of_players()
+    elif choice == "l":
+        pass
+    elif choice == "e":
+        pass
+    elif choice == "f":
+        pass
+    elif choice == "b":
+        quit()
 
 def main():
-    player.add_number_of_players()
+    main_menu()
     get_player_ready()
 
 main()
 
-    
-    
+
+"""
+# write in json file
+import json
+file = open('/filesave/playername.json', 'w+')
+data = { "x": 12153535.232321, "y": 35234531.232322 }
+json.dump(data, file)
+# https://stackoverflow.com/questions/4450144/easy-save-load-of-data-in-python#4450248
+# load from json file
+import json
+file = open('/usr/data/application/json-dump.json', 'r')
+print json.load(file) """
